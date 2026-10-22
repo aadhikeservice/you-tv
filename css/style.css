@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Tamil Live TV IPTV - Cinema & Glassmorphic Stylesheet
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --app-bg: #070b14;
+  --surface-card: rgba(15, 23, 42, 0.75);
+  --surface-border: rgba(51, 65, 85, 0.5);
+  --accent-primary: #e11d48;
+  --accent-glow: rgba(225, 29, 72, 0.35);
+  --live-color: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--app-bg);
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Tamil Typography Enhancement */
+.font-tamil {
+  font-family: 'Baloo Thambi 2', 'Noto Sans Tamil', 'Mukta Malar', system-ui, sans-serif;
+}
+
+/* Custom Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+/* Video Aspect Ratio Classes */
+.ratio-16-9 {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ratio-fill {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ratio-4-3 {
+  width: 100%;
+  height: 100%;
+  max-width: calc(100vh * 4 / 3);
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.ratio-original {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0 auto;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.glass-panel-elevated {
+  background: rgba(17, 24, 39, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(75, 85, 99, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+/* Video Stage Ambient Glow */
+#player-ambient-glow {
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.65;
+  transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Pulsing Live Dot */
+@keyframes live-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.live-indicator {
+  animation: live-pulse 2s infinite;
+}
+
+/* TV Remote Control Body */
+.remote-body {
+  background: linear-gradient(145deg, #1e293b, #0f172a);
+  border: 2px solid #334155;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.remote-btn {
+  background: linear-gradient(145deg, #334155, #1e293b);
+  border: 1px solid #475569;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.15s ease;
+}
+
+.remote-btn:active {
+  transform: translateY(2px) scale(0.96);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
+              inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.remote-dpad-center {
+  background: radial-gradient(circle, #475569 0%, #1e293b 100%);
+  border: 2px solid #64748b;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Channel Dial OSD (Authentic TV Overlay) */
+#channel-dial-overlay {
+  font-family: 'Courier New', monospace, sans-serif;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+}
+
+/* Hide native controls */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+/* Category Tab Pill Hover Glow */
+.cat-pill:hover {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Bulletproof Modal Overlay & Dialog Styles
+   ========================================================================== */
+.app-modal {
+  display: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  z-index: 99999 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  overflow-y: auto !important;
+}
+
+.app-modal.flex:not(.hidden),
+.app-modal.active,
+.app-modal[style*="display: flex"] {
+  display: flex !important;
+}
+
+.app-modal.hidden {
+  display: none !important;
+}
+
+/* Ensure modal content panels are visible and scrollable */
+.app-modal > div {
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 100000;
+}

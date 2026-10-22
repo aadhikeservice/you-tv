@@ -1,0 +1,129 @@
+#EXTM3U
+#PLAYLIST: Tamil Local TV Channels (prabhacap/IPTV - bit.ly/3h5yNZM)
+#DESCRIPTION: Comprehensive playlist of Tamil local, regional, and district television channels.
+
+#EXTINF:-1 tvg-id="PuthuyugamTV.in" tvg-name="Puthuyugam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Puthuyugam_TV_logo.png/220px-Puthuyugam_TV_logo.png" group-title="Tamil Local",Puthuyugam TV (புதுயுகம்)
+https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/puthuyugam/index.m3u8
+
+#EXTINF:-1 tvg-id="MakkalTV.in" tvg-name="Makkal TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Makkal_TV_logo.png/220px-Makkal_TV_logo.png" group-title="Tamil Local",Makkal TV (மக்கள் தொலைக்காட்சி)
+https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/makkal-tv/index.m3u8
+
+#EXTINF:-1 tvg-id="LotusNews.in" tvg-name="Lotus News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Lotus_News_logo.png/220px-Lotus_News_logo.png" group-title="Tamil Local",Lotus News (லோட்டஸ் நியூஸ்)
+https://stream.lotusnews.tv/live/index.m3u8
+
+#EXTINF:-1 tvg-id="CauveryNews.in" tvg-name="Cauvery News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Cauvery_News_Logo.png/220px-Cauvery_News_Logo.png" group-title="Tamil Local",Cauvery News (காவிரி செய்திகள்)
+https://live.cauverynews.tv/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="TamilanTV.in" tvg-name="Tamilan TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/6f/Tamilan_Television_Logo.png/220px-Tamilan_Television_Logo.png" group-title="Tamil Local",Tamilan TV (தமிழன் டிவி)
+https://segment.yuppcdn.net/110322/tamilantv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="MoonTV.in" tvg-name="Moon TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/2/2e/Moon_TV_Logo.png/220px-Moon_TV_Logo.png" group-title="Tamil Local",Moon TV (மூன் தொலைக்காட்சி)
+https://stream.moontv.in/live/stream.m3u8
+
+#EXTINF:-1 tvg-id="WinTV.in" tvg-name="Win TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Win_TV_logo.png/220px-Win_TV_logo.png" group-title="Tamil Local",Win TV (வின் டிவி)
+https://live.wintv.in/hls/stream.m3u8
+
+#EXTINF:-1 tvg-id="PepperTV.in" tvg-name="Pepper TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Peppers_TV_logo.png/220px-Peppers_TV_logo.png" group-title="Tamil Local",Pepper TV (பெப்பர்ஸ் டிவி)
+https://stream.pepperstv.in/live/index.m3u8
+
+#EXTINF:-1 tvg-id="VelichamTV.in" tvg-name="Velicham TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Velicham_TV.png/220px-Velicham_TV.png" group-title="Tamil Local",Velicham TV (வெளிச்சம் டிவி)
+https://live.velichamtv.com/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="MalarTV.in" tvg-name="Malar TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Malar_TV_logo.png/220px-Malar_TV_logo.png" group-title="Tamil Local",Malar TV (மலர் டிவி)
+https://stream.malartv.com/live/index.m3u8
+
+#EXTINF:-1 tvg-id="MKTV.in" tvg-name="MK TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/MK_TV_logo.png/220px-MK_TV_logo.png" group-title="Tamil Local",MK TV (எம்.கே டிவி)
+https://live.mktv.in/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="MKSix.in" tvg-name="MK Six" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/MK_TV_logo.png/220px-MK_TV_logo.png" group-title="Tamil Local",MK Six (எம்.கே சிக்ஸ்)
+https://live.mktv.in/hls/mksix.m3u8
+
+#EXTINF:-1 tvg-id="ArraTV.in" tvg-name="Arra TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Arra_TV.png/220px-Arra_TV.png" group-title="Tamil Local",Arra TV (அர்ரா தொலைக்காட்சி)
+https://stream.arratv.com/live/index.m3u8
+
+#EXTINF:-1 tvg-id="VendharTV.in" tvg-name="Vendhar TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Vendhar_TV_logo.png/220px-Vendhar_TV_logo.png" group-title="Tamil Local",Vendhar TV (வேந்தர் டிவி)
+https://segment.yuppcdn.net/110322/vendhartv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="CaptainNews.in" tvg-name="Captain News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Captain_News_logo.png/220px-Captain_News_logo.png" group-title="Tamil Local",Captain News (கேப்டன் செய்திகள்)
+https://segment.yuppcdn.net/110322/captainnews/playlist.m3u8
+
+#EXTINF:-1 tvg-id="CaptainTV.in" tvg-name="Captain TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/d/d4/Captain_TV_logo.png/220px-Captain_TV_logo.png" group-title="Tamil Local",Captain TV (கேப்டன் தொலைக்காட்சி)
+https://segment.yuppcdn.net/110322/captaintv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="MegaTV.in" tvg-name="Mega TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Mega_TV_logo.png/220px-Mega_TV_logo.png" group-title="Tamil Local",Mega TV (மெகா டிவி)
+https://segment.yuppcdn.net/110322/megatv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="Mega24.in" tvg-name="Mega 24" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Mega_TV_logo.png/220px-Mega_TV_logo.png" group-title="Tamil Local",Mega 24 (மெகா 24)
+https://segment.yuppcdn.net/110322/mega24/playlist.m3u8
+
+#EXTINF:-1 tvg-id="ThalamTV.in" tvg-name="Thalam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Thalam_TV.png/220px-Thalam_TV.png" group-title="Tamil Local",Thalam TV (தளம் தொலைக்காட்சி)
+https://live.thalamtv.com/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="ImayamTV.in" tvg-name="Imayam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/32/Imayam_TV_logo.png/220px-Imayam_TV_logo.png" group-title="Tamil Local",Imayam TV (இமயம் டிவி)
+https://live.imayamtv.com/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="VaanavilTV.in" tvg-name="Vaanavil TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Vaanavil_TV.png/220px-Vaanavil_TV.png" group-title="Tamil Local",Vaanavil TV (வானவில் டிவி)
+https://live.vaanaviltv.com/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="VasanthTV.in" tvg-name="Vasanth TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/Vasanth_TV_logo.png/220px-Vasanth_TV_logo.png" group-title="Tamil Local",Vasanth TV (வசந்த் டிவி)
+https://segment.yuppcdn.net/110322/vasanthtv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="StarTamilTV.in" tvg-name="Star Tamil TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Star_Tamil.png/220px-Star_Tamil.png" group-title="Tamil Local",Star Tamil TV (ஸ்டார் தமிழ்)
+https://live.startamil.tv/hls/stream.m3u8
+
+#EXTINF:-1 tvg-id="GTVTamil.in" tvg-name="GTV Tamil" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/GTV_Tamil.png/220px-GTV_Tamil.png" group-title="Tamil Local",GTV Tamil (ஜிடிவி தமிழ்)
+https://live.gtvtamil.com/hls/live.m3u8
+
+#EXTINF:-1 tvg-id="TVI.in" tvg-name="TVI Tamil Vision" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Tamil_Vision_International_logo.png/220px-Tamil_Vision_International_logo.png" group-title="Tamil Local",Tamil Vision TVI (தமிழ் விஷன்)
+https://live.tvi.ca/hls/stream.m3u8
+
+#EXTINF:-1 tvg-id="PolimerNews.in" tvg-name="Polimer News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Polimer_News_logo.png/220px-Polimer_News_logo.png" group-title="Tamil Local",Polimer News (பாலிமர் செய்திகள்)
+https://segment.yuppcdn.net/110322/polimernews/playlist.m3u8
+
+#EXTINF:-1 tvg-id="ThanthiTV.in" tvg-name="Thanthi TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Thanthi_TV_logo.png/220px-Thanthi_TV_logo.png" group-title="Tamil Local",Thanthi TV (தந்தி டிவி)
+https://vidcdn.vidgyor.com/thanthi-origin/liveabr/thanthi-origin/live1/playlist.m3u8
+
+#EXTINF:-1 tvg-id="PuthiyaThalaimurai.in" tvg-name="Puthiya Thalaimurai" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Puthiya_Thalaimurai_TV_Logo.png/220px-Puthiya_Thalaimurai_TV_Logo.png" group-title="Tamil Local",Puthiya Thalaimurai (புதிய தலைமுறை)
+https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/news-tamil-24x7/index.m3u8
+
+#EXTINF:-1 tvg-id="News7Tamil.in" tvg-name="News7 Tamil" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/7f/News7_Tamil_logo.png/220px-News7_Tamil_logo.png" group-title="Tamil Local",News7 Tamil (நியூஸ் 7)
+https://segment.yuppcdn.net/110322/news7/playlist.m3u8
+
+#EXTINF:-1 tvg-id="SunNews.in" tvg-name="Sun News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Sun_News_logo.png/220px-Sun_News_logo.png" group-title="Tamil Local",Sun News (சன் செய்திகள்)
+https://segment.yuppcdn.net/110322/sunnews/playlist.m3u8
+
+#EXTINF:-1 tvg-id="News18Tamil.in" tvg-name="News18 Tamil Nadu" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/News18_Tamil_Nadu_Logo.png/220px-News18_Tamil_Nadu_Logo.png" group-title="Tamil Local",News18 Tamil Nadu (நியூஸ் 18)
+https://nw18live.cdn.jio.com/bpk-tv/News18_Tamil_Nadu_NW18_MOB/output01/index.m3u8
+
+#EXTINF:-1 tvg-id="SathiyamTV.in" tvg-name="Sathiyam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Sathiyam_TV_Logo.png/220px-Sathiyam_TV_Logo.png" group-title="Tamil Local",Sathiyam TV (சத்தியம் டிவி)
+https://segment.yuppcdn.net/110322/sathiyam/playlist.m3u8
+
+#EXTINF:-1 tvg-id="NewsJ.in" tvg-name="News J" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/0/07/News_J_logo.png/220px-News_J_logo.png" group-title="Tamil Local",News J (நியூஸ் ஜெ)
+https://segment.yuppcdn.net/110322/newsj/playlist.m3u8
+
+#EXTINF:-1 tvg-id="Malaimurasu.in" tvg-name="Malaimurasu" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Malai_Murasu_logo.png/220px-Malai_Murasu_logo.png" group-title="Tamil Local",Malaimurasu (மாலைமுரசு)
+https://segment.yuppcdn.net/110322/malaimurasu/playlist.m3u8
+
+#EXTINF:-1 tvg-id="KalaignarSeithigal.in" tvg-name="Kalaignar Seithigal" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/d/d7/Kalaignar_Seithigal.png/220px-Kalaignar_Seithigal.png" group-title="Tamil Local",Kalaignar Seithigal (கலைஞர் செய்திகள்)
+https://segment.yuppcdn.net/110322/kalaignarseithigal/playlist.m3u8
+
+#EXTINF:-1 tvg-id="DDPodhigai.in" tvg-name="DD Podhigai" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/Doordarshan_Podhigai_Logo.png/220px-Doordarshan_Podhigai_Logo.png" group-title="Tamil Local",DD Podhigai / Tamil (டிடி தமிழ்)
+https://segment.yuppcdn.net/110322/ddpodhigai/playlist.m3u8
+
+#EXTINF:-1 tvg-id="ShakthiTV.lk" tvg-name="Shakthi TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Shakthi_TV_logo.png/220px-Shakthi_TV_logo.png" group-title="Tamil Local",Shakthi TV (சக்தி தொலைக்காட்சி)
+https://segment.yuppcdn.net/110322/shakthitv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="IBCTamil.uk" tvg-name="IBC Tamil" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/IBC_Tamil_Logo.png/220px-IBC_Tamil_Logo.png" group-title="Tamil Local",IBC Tamil (ஐபிசி தமிழ்)
+https://segment.yuppcdn.net/110322/ibctamil/playlist.m3u8
+
+#EXTINF:-1 tvg-id="DeepamTV.eu" tvg-name="Deepam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/Deepam_TV_logo.png/220px-Deepam_TV_logo.png" group-title="Tamil Local",Deepam TV Europe (தீபம் டிவி)
+https://segment.yuppcdn.net/110322/deepamtv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="DanTamilOli.lk" tvg-name="Dan Tamil Oli" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Dan_TV_logo.png/220px-Dan_TV_logo.png" group-title="Tamil Local",Dan Tamil Oli (டான் தமிழ் ஒளி)
+https://segment.yuppcdn.net/110322/dantamiloli/playlist.m3u8
+
+#EXTINF:-1 tvg-id="NethraTV.lk" tvg-name="Nethra TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Nethra_TV.png/220px-Nethra_TV.png" group-title="Tamil Local",Nethra TV (நேத்ரா டிவி)
+https://segment.yuppcdn.net/110322/nethratv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="VasanthamTV.lk" tvg-name="Vasantham TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Vasantham_TV.png/220px-Vasantham_TV.png" group-title="Tamil Local",Vasantham TV (வசந்தம் தொலைக்காட்சி)
+https://segment.yuppcdn.net/110322/vasanthamtv/playlist.m3u8

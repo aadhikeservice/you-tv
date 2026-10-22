@@ -1,0 +1,39 @@
+#EXTM3U
+#PLAYLIST: Tamil Live News Channels
+#DESCRIPTION: 24/7 Leading Tamil News Television Streams
+
+#EXTINF:-1 tvg-id="puthiya-thalaimurai" tvg-name="Puthiya Thalaimurai" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Puthiya_Thalaimurai_TV_Logo.png/220px-Puthiya_Thalaimurai_TV_Logo.png" tvg-chno="1" group-title="News",Puthiya Thalaimurai (புதிய தலைமுறை)
+https://segment.yuppcdn.net/240122/puthiya/playlist.m3u8
+
+#EXTINF:-1 tvg-id="polimer-news" tvg-name="Polimer News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/94/Polimer_News_logo.png/220px-Polimer_News_logo.png" tvg-chno="2" group-title="News",Polimer News (பாலிமர் செய்திகள்)
+https://segment.yuppcdn.net/110322/polimernews/playlist.m3u8
+
+#EXTINF:-1 tvg-id="thanthi-tv" tvg-name="Thanthi TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Thanthi_TV_logo.png/220px-Thanthi_TV_logo.png" tvg-chno="3" group-title="News",Thanthi TV (தந்தி டிவி)
+https://vidcdn.vidgyor.com/thanthi-origin/liveabr/thanthi-origin/live1/playlist.m3u8
+
+#EXTINF:-1 tvg-id="news7-tamil" tvg-name="News7 Tamil" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/7f/News7_Tamil_logo.png/220px-News7_Tamil_logo.png" tvg-chno="4" group-title="News",News7 Tamil (நியூஸ் 7 தமிழ்)
+https://segment.yuppcdn.net/110322/news7/playlist.m3u8
+
+#EXTINF:-1 tvg-id="news18-tamilnadu" tvg-name="News18 Tamil Nadu" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/News18_Tamil_Nadu_Logo.png/220px-News18_Tamil_Nadu_Logo.png" tvg-chno="5" group-title="News",News18 Tamil Nadu (நியூஸ் 18 தமிழ்நாடு)
+https://nw18live.cdn.jio.com/bpk-tv/News18_Tamil_Nadu_NW18_MOB/output01/index.m3u8
+
+#EXTINF:-1 tvg-id="sun-news" tvg-name="Sun News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Sun_News_logo.png/220px-Sun_News_logo.png" tvg-chno="6" group-title="News",Sun News (சன் நியூஸ்)
+https://segment.yuppcdn.net/110322/sunnews/playlist.m3u8
+
+#EXTINF:-1 tvg-id="kalaignar-seithigal" tvg-name="Kalaignar Seithigal" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/d/d7/Kalaignar_Seithigal.png/220px-Kalaignar_Seithigal.png" tvg-chno="7" group-title="News",Kalaignar Seithigal (கலைஞர் செய்திகள்)
+https://segment.yuppcdn.net/110322/kalaignarseithigal/playlist.m3u8
+
+#EXTINF:-1 tvg-id="sathiyam-tv" tvg-name="Sathiyam TV" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Sathiyam_TV_Logo.png/220px-Sathiyam_TV_Logo.png" tvg-chno="8" group-title="News",Sathiyam TV (சத்தியம் டிவி)
+https://segment.yuppcdn.net/110322/sathiyam/playlist.m3u8
+
+#EXTINF:-1 tvg-id="dd-podhigai" tvg-name="DD Podhigai" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/Doordarshan_Podhigai_Logo.png/220px-Doordarshan_Podhigai_Logo.png" tvg-chno="9" group-title="News",DD Podhigai (டிடி பொதிகை)
+https://segment.yuppcdn.net/110322/ddpodhigai/playlist.m3u8
+
+#EXTINF:-1 tvg-id="news-j" tvg-name="News J" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/0/07/News_J_logo.png/220px-News_J_logo.png" tvg-chno="10" group-title="News",News J (நியூஸ் ஜெ)
+https://segment.yuppcdn.net/110322/newsj/playlist.m3u8
+
+#EXTINF:-1 tvg-id="malaimurasu-tv" tvg-name="Malaimurasu Seithigal" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Malai_Murasu_logo.png/220px-Malai_Murasu_logo.png" tvg-chno="11" group-title="News",Malaimurasu Seithigal (மாலைமுரசு)
+https://segment.yuppcdn.net/110322/malaimurasu/playlist.m3u8
+
+#EXTINF:-1 tvg-id="ibc-tamil-news" tvg-name="IBC Tamil News" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/IBC_Tamil_Logo.png/220px-IBC_Tamil_Logo.png" tvg-chno="12" group-title="News",IBC Tamil News (ஐபிசி தமிழ் செய்திகள்)
+https://segment.yuppcdn.net/110322/ibctamil/playlist.m3u8
