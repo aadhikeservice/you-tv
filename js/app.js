@@ -129,9 +129,9 @@ class TamilIPTVApp {
 
   loadStorage() {
     try {
-      const isClean = (typeof SafeStorage !== 'undefined') ? SafeStorage.getItem('tamil_iptv_clean_v3') : null;
+      const isClean = (typeof SafeStorage !== 'undefined') ? SafeStorage.getItem('tamil_iptv_clean_v4') : null;
       if (!isClean && typeof SafeStorage !== 'undefined') {
-        SafeStorage.setItem('tamil_iptv_clean_v3', '1');
+        SafeStorage.setItem('tamil_iptv_clean_v4', '1');
         SafeStorage.setJSON('tamil_iptv_custom_channels', []);
         SafeStorage.setJSON('tamil_iptv_favorites', []);
         SafeStorage.setJSON('tamil_iptv_deleted_channels', []);
