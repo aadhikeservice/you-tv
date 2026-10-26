@@ -710,29 +710,22 @@
       </div>
 
       <!-- Option A: Load from URL -->
-      <form id="import-m3u-url-form" onsubmit="event.preventDefault(); const u = document.getElementById('m3u-url-input').value.trim(); const f = document.getElementById('m3u-filter-select')?.value || 'tam'; if (u && window.app) window.app.loadM3UFromUrl(u, f);" class="space-y-3">
+      <form id="import-m3u-url-form" onsubmit="event.preventDefault(); const u = document.getElementById('m3u-url-input').value.trim(); if (u && window.app) window.app.loadM3UFromUrl(u, 'all');" class="space-y-3">
         <div class="flex items-center justify-between">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Import via Remote URL</label>
           <span class="text-[10px] text-rose-400 font-semibold">Supports M3U / M3U8</span>
         </div>
-        <div class="space-y-2">
+        <div class="flex items-center space-x-2">
           <input type="url" 
                  id="m3u-url-input" 
-                 placeholder="https://iptv-org.github.io/iptv/index.m3u" 
-                 value="https://iptv-org.github.io/iptv/index.m3u"
-                 class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-rose-500 font-mono">
-          
-          <div class="flex items-center space-x-2">
-            <select id="m3u-filter-select" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-rose-500">
-              <option value="tam" selected>Filter Tamil Channels Only (Recommended - Fast)</option>
-              <option value="in">Filter Indian Channels (All Languages)</option>
-              <option value="all">Load All Global Channels (Full Master List)</option>
-            </select>
-            <button type="submit" id="btn-submit-m3u-url" class="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>Load Playlist</span>
-            </button>
-          </div>
+                 placeholder="https://example.com/live/playlist.m3u" 
+                 value=""
+                 required
+                 class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-rose-500 font-mono">
+          <button type="submit" id="btn-submit-m3u-url" class="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Load Playlist</span>
+          </button>
         </div>
 
         <!-- Dynamic Status Progress Indicator -->
@@ -752,49 +745,6 @@
                id="m3u-file-input" 
                accept=".m3u,.m3u8,text/plain"
                class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer">
-      </div>
-
-      <!-- Option C: Pre-bundled Collections -->
-      <div class="space-y-2 border-t border-slate-800/80 pt-4">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Featured IPTV-Org Playlists (Click to Load)</label>
-        <div class="grid grid-cols-1 gap-2">
-          <!-- Featured: Tamil Local Channels (bit.ly/3h5yNZM) -->
-          <button type="button" id="btn-preset-local-m3u" onclick="if (window.app) window.app.loadM3UFromUrl('https://bit.ly/3h5yNZM', 'all');" class="text-left p-3 rounded-xl bg-gradient-to-r from-emerald-950/50 to-slate-900 hover:from-emerald-900/60 hover:to-slate-800 border border-emerald-500/50 text-xs transition-all flex items-center justify-between group cursor-pointer">
-            <div>
-              <div class="font-extrabold text-white flex items-center space-x-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-emerald-300">Tamil Local Channels (bit.ly/3h5yNZM)</span>
-                <span class="px-1.5 py-0.2 bg-emerald-600 text-white rounded text-[9px] font-black uppercase">Local TV</span>
-              </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">https://bit.ly/3h5yNZM (90+ Regional & District Cable TV Streams)</div>
-            </div>
-            <span class="px-2.5 py-1 rounded-lg bg-emerald-600/90 group-hover:bg-emerald-500 text-white font-bold text-[11px] shadow">Load</span>
-          </button>
-
-          <!-- Featured: iptv-org Master index.m3u -->
-          <button type="button" id="btn-preset-index-m3u" onclick="if (window.app) window.app.loadM3UFromUrl('https://iptv-org.github.io/iptv/index.m3u', document.getElementById('m3u-filter-select')?.value || 'tam');" class="text-left p-3 rounded-xl bg-gradient-to-r from-rose-950/40 to-slate-900 hover:from-rose-900/50 hover:to-slate-800 border border-rose-500/40 text-xs transition-all flex items-center justify-between group cursor-pointer">
-            <div>
-              <div class="font-extrabold text-white flex items-center space-x-1.5">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                <span>iptv-org Master Playlist (index.m3u)</span>
-                <span class="px-1.5 py-0.2 bg-rose-600 text-white rounded text-[9px] font-black uppercase">Global Master</span>
-              </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">https://iptv-org.github.io/iptv/index.m3u</div>
-            </div>
-            <span class="px-2.5 py-1 rounded-lg bg-rose-600/80 group-hover:bg-rose-500 text-white font-bold text-[11px] shadow">Load</span>
-          </button>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-            <button type="button" onclick="document.getElementById('m3u-url-input').value = 'https://iptv-org.github.io/iptv/languages/tam.m3u'; document.getElementById('m3u-filter-select').value = 'all';" class="text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs">
-              <div class="font-bold text-white">iptv-org Tamil (tam.m3u)</div>
-              <div class="text-[10px] text-slate-400">Curated Tamil language streams</div>
-            </button>
-            <button type="button" onclick="document.getElementById('m3u-url-input').value = 'https://iptv-org.github.io/iptv/countries/in.m3u'; document.getElementById('m3u-filter-select').value = 'all';" class="text-left p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs">
-              <div class="font-bold text-white">iptv-org India (in.m3u)</div>
-              <div class="text-[10px] text-slate-400">All Indian regional & national</div>
-            </button>
-          </div>
-        </div>
       </div>
 
     </div>

@@ -325,7 +325,7 @@ class TamilIPTVApp {
     document.getElementById('import-m3u-url-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
       const url = document.getElementById('m3u-url-input').value.trim();
-      const filter = document.getElementById('m3u-filter-select')?.value || 'tam';
+      const filter = document.getElementById('m3u-filter-select')?.value || 'all';
       if (url) this.loadM3UFromUrl(url, filter);
     });
 
