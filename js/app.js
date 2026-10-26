@@ -19,6 +19,8 @@ class TamilIPTVApp {
     this.recentChannelIds = [];
     this.isGridView = false;
     this.displayLimit = 60; // Smooth pagination limit
+    this.categoryRenames = {};
+    this.deletedCategoryIds = [];
 
     this.player = null;
     this.remote = null;
@@ -37,6 +39,7 @@ class TamilIPTVApp {
         : [];
       const combined = [...defaults, ...this.customChannels];
       this.channels = combined.filter(ch => !this.deletedChannelIds.includes(ch.id));
+      this.applyCategoryOverrides();
 
       // 3. Initialize player with dual engine (HLS.js + 1080p Live Stream)
       try {
@@ -135,11 +138,15 @@ class TamilIPTVApp {
         SafeStorage.setJSON('tamil_iptv_custom_channels', []);
         SafeStorage.setJSON('tamil_iptv_favorites', []);
         SafeStorage.setJSON('tamil_iptv_deleted_channels', []);
+        SafeStorage.setJSON('tamil_iptv_category_renames', {});
+        SafeStorage.setJSON('tamil_iptv_deleted_categories', []);
         SafeStorage.setItem('tamil_iptv_last_channel', '');
         this.favorites = [];
         this.recentChannelIds = [];
         this.customChannels = [];
         this.deletedChannelIds = [];
+        this.categoryRenames = {};
+        this.deletedCategoryIds = [];
         return;
       }
 
@@ -149,12 +156,16 @@ class TamilIPTVApp {
         this.customChannels = SafeStorage.getJSON('tamil_iptv_custom_channels', []);
         this.customCategories = SafeStorage.getJSON('tamil_iptv_custom_categories', []);
         this.deletedChannelIds = SafeStorage.getJSON('tamil_iptv_deleted_channels', []);
+        this.categoryRenames = SafeStorage.getJSON('tamil_iptv_category_renames', {});
+        this.deletedCategoryIds = SafeStorage.getJSON('tamil_iptv_deleted_categories', []);
       } else {
         this.favorites = [];
         this.recentChannelIds = [];
         this.customChannels = [];
         this.customCategories = [];
         this.deletedChannelIds = [];
+        this.categoryRenames = {};
+        this.deletedCategoryIds = [];
       }
     } catch (e) {
       this.favorites = [];
@@ -162,6 +173,8 @@ class TamilIPTVApp {
       this.customChannels = [];
       this.customCategories = [];
       this.deletedChannelIds = [];
+      this.categoryRenames = {};
+      this.deletedCategoryIds = [];
     }
   }
 
@@ -173,10 +186,25 @@ class TamilIPTVApp {
         SafeStorage.setJSON('tamil_iptv_custom_channels', this.customChannels.slice(0, 500));
         SafeStorage.setJSON('tamil_iptv_custom_categories', this.customCategories);
         SafeStorage.setJSON('tamil_iptv_deleted_channels', this.deletedChannelIds);
+        SafeStorage.setJSON('tamil_iptv_category_renames', this.categoryRenames);
+        SafeStorage.setJSON('tamil_iptv_deleted_categories', this.deletedCategoryIds);
       }
     } catch (e) {
       console.warn("Storage quota limit reached, saving in-memory:", e);
     }
+  }
+
+  applyCategoryOverrides() {
+    if (!Array.isArray(this.channels)) return;
+    this.channels.forEach(ch => {
+      if (this.deletedCategoryIds.includes(ch.category)) {
+        ch.category = 'general';
+        ch.categoryName = 'General';
+      }
+      if (this.categoryRenames[ch.category]) {
+        ch.categoryName = this.categoryRenames[ch.category];
+      }
+    });
   }
 
   bindEvents() {
@@ -416,6 +444,22 @@ class TamilIPTVApp {
       if (this.handleAddCategory(name, tamil)) {
         document.getElementById('add-category-form')?.reset();
       }
+    });
+
+    // Manage Categories button
+    document.getElementById('btn-open-manage-categories')?.addEventListener('click', () => {
+      this.openManageCategoriesModal();
+    });
+
+    // Edit Category form submit
+    document.getElementById('edit-category-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleSaveEditedCategory();
+    });
+
+    // Delete Category confirm button
+    document.getElementById('btn-confirm-delete-cat')?.addEventListener('click', () => {
+      this.handleConfirmDeleteCategory();
     });
 
     // Preset category chips in Add Category modal
@@ -1149,6 +1193,7 @@ class TamilIPTVApp {
 
     const accessible = this.getUserAccessibleChannels();
     const categories = getChannelCategories(accessible, this.customCategories);
+    const isAdmin = !!(this.auth && this.auth.isAdmin());
 
     if (categories.length === 0) {
       container.innerHTML = `
@@ -1161,16 +1206,29 @@ class TamilIPTVApp {
 
     container.innerHTML = categories.map(cat => {
       const isActive = this.currentCategory === cat.id;
+      const isSystem = cat.id === 'all' || cat.id === 'favorites';
 
       return `
-        <button data-cat="${cat.id}" title="${cat.name}" class="cat-pill flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+        <div class="cat-pill-item inline-flex items-center rounded-full transition-all duration-200 ${
           isActive 
             ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30 ring-2 ring-rose-400/50' 
             : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/50'
         }">
-          <span>${cat.name}</span>
-          <span class="text-[10px] opacity-75 font-mono px-1.5 py-0.5 rounded-full ${isActive ? 'bg-black/25' : 'bg-slate-900/60'}">(${cat.count})</span>
-        </button>
+          <button type="button" data-cat="${cat.id}" title="${cat.name}" class="cat-pill flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold whitespace-nowrap cursor-pointer">
+            <span>${cat.name}</span>
+            <span class="text-[10px] opacity-75 font-mono px-1.5 py-0.5 rounded-full ${isActive ? 'bg-black/25' : 'bg-slate-900/60'}">(${cat.count})</span>
+          </button>
+          ${isAdmin && !isSystem ? `
+            <div class="inline-flex items-center pr-1.5 space-x-0.5">
+              <button type="button" data-edit-cat="${cat.id}" data-cat-name="${cat.name}" title="Edit Category" class="cat-edit-btn p-1 rounded-full text-slate-400 hover:text-amber-300 hover:bg-black/30 transition-colors cursor-pointer">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button type="button" data-delete-cat="${cat.id}" data-cat-name="${cat.name}" data-cat-count="${cat.count}" title="Delete Category" class="cat-delete-btn p-1 rounded-full text-slate-400 hover:text-rose-300 hover:bg-black/30 transition-colors cursor-pointer">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          ` : ''}
+        </div>
       `;
     }).join('');
 
@@ -1179,6 +1237,26 @@ class TamilIPTVApp {
       btn.addEventListener('click', () => {
         const catId = btn.getAttribute('data-cat');
         this.setCategory(catId);
+      });
+    });
+
+    // Click handlers for Edit & Delete category buttons on pill
+    container.querySelectorAll('.cat-edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const catId = btn.getAttribute('data-edit-cat');
+        const catName = btn.getAttribute('data-cat-name');
+        this.openEditCategoryModal(catId, catName);
+      });
+    });
+
+    container.querySelectorAll('.cat-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const catId = btn.getAttribute('data-delete-cat');
+        const catName = btn.getAttribute('data-cat-name');
+        const catCount = btn.getAttribute('data-cat-count');
+        this.openDeleteCategoryModal(catId, catName, catCount);
       });
     });
   }
@@ -2040,16 +2118,22 @@ class TamilIPTVApp {
     ];
 
     const catMap = new Map();
-    baseCategories.forEach(c => catMap.set(c.id, c));
+    baseCategories.forEach(c => {
+      if (!this.deletedCategoryIds.includes(c.id)) {
+        const renamed = this.categoryRenames[c.id] || c.name;
+        catMap.set(c.id, { id: c.id, name: renamed, tamil: renamed });
+      }
+    });
 
     // Merge custom categories
     if (Array.isArray(this.customCategories)) {
       this.customCategories.forEach(c => {
-        if (c && c.id) {
+        if (c && c.id && !this.deletedCategoryIds.includes(c.id)) {
+          const renamed = this.categoryRenames[c.id] || c.name || c.id;
           catMap.set(c.id, { 
             id: c.id, 
-            name: c.name || c.id, 
-            tamil: c.name || c.id 
+            name: renamed, 
+            tamil: renamed 
           });
         }
       });
@@ -2058,11 +2142,12 @@ class TamilIPTVApp {
     // Merge any categories currently present in channels
     if (Array.isArray(this.channels)) {
       this.channels.forEach(ch => {
-        if (ch.category && !catMap.has(ch.category)) {
+        if (ch.category && !this.deletedCategoryIds.includes(ch.category) && !catMap.has(ch.category)) {
+          const renamed = this.categoryRenames[ch.category] || ch.categoryName || ch.category;
           catMap.set(ch.category, { 
             id: ch.category, 
-            name: ch.categoryName || ch.category, 
-            tamil: ch.categoryName || ch.category 
+            name: renamed, 
+            tamil: renamed 
           });
         }
       });
@@ -2089,6 +2174,219 @@ class TamilIPTVApp {
       if (catMap.has(prevVal) || prevVal === '__new__') {
         editSelect.value = prevVal;
       }
+    }
+  }
+
+  // Open Manage Categories Modal
+  openManageCategoriesModal() {
+    if (!this.auth || !this.auth.isAdmin()) {
+      alert("Administrator access required to manage categories. Please sign in as Admin.");
+      this.openModal('login-modal');
+      return;
+    }
+    this.renderManageCategoriesList();
+    this.openModal('manage-categories-modal');
+  }
+
+  // Render Category List inside Manage Categories Modal
+  renderManageCategoriesList() {
+    const listContainer = document.getElementById('manage-categories-list');
+    if (!listContainer) return;
+
+    const accessible = this.getUserAccessibleChannels();
+    const categories = getChannelCategories(accessible, this.customCategories)
+      .filter(c => c.id !== 'all' && c.id !== 'favorites');
+
+    const countLabel = document.getElementById('manage-categories-count-label');
+    if (countLabel) countLabel.textContent = `${categories.length} Categories`;
+
+    if (categories.length === 0) {
+      listContainer.innerHTML = `
+        <div class="p-6 text-center text-xs text-slate-500">
+          No custom or content categories available. Click "+ Add New Category" above to create one.
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = categories.map(cat => {
+      return `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 hover:bg-slate-900 border border-slate-800 transition-all">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-300">
+              ${(cat.name || 'C').substring(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <div class="font-bold text-white text-xs">${cat.name}</div>
+              <div class="text-[11px] text-slate-400 font-mono">${cat.count} channel(s)</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="window.app.openEditCategoryModal('${cat.id}', '${cat.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center space-x-1 transition-all cursor-pointer">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <span>Edit</span>
+            </button>
+            <button type="button" onclick="window.app.openDeleteCategoryModal('${cat.id}', '${cat.name.replace(/'/g, "\\'")}', ${cat.count})" class="px-2.5 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-semibold flex items-center space-x-1 transition-all cursor-pointer">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Open Edit Category Modal
+  openEditCategoryModal(catId, catName = '') {
+    if (!this.auth || !this.auth.isAdmin()) {
+      alert("Administrator access required to edit categories. Please sign in as Admin.");
+      this.openModal('login-modal');
+      return;
+    }
+
+    if (catId === 'all' || catId === 'favorites') {
+      if (this.remote) this.remote.showToast("System categories cannot be edited.");
+      return;
+    }
+
+    const idInput = document.getElementById('edit-cat-id');
+    const nameInput = document.getElementById('edit-cat-name');
+    if (idInput) idInput.value = catId;
+    if (nameInput) nameInput.value = catName || catId;
+
+    this.openModal('edit-category-modal');
+  }
+
+  // Save changes from Edit Category Modal
+  handleSaveEditedCategory() {
+    if (!this.auth || !this.auth.isAdmin()) {
+      alert("Administrator access required to edit categories. Please sign in as Admin.");
+      this.openModal('login-modal');
+      return;
+    }
+
+    const idInput = document.getElementById('edit-cat-id');
+    const nameInput = document.getElementById('edit-cat-name');
+    const catId = idInput ? idInput.value.trim() : '';
+    const newName = nameInput ? nameInput.value.trim() : '';
+
+    if (!catId || !newName) {
+      alert("Category name is required.");
+      return;
+    }
+
+    // Record rename
+    this.categoryRenames[catId] = newName;
+
+    // Update in channels
+    this.channels.forEach(ch => {
+      if (ch.category === catId) {
+        ch.categoryName = newName;
+      }
+    });
+    this.customChannels.forEach(ch => {
+      if (ch.category === catId) {
+        ch.categoryName = newName;
+      }
+    });
+
+    // Update in customCategories if present
+    const customCat = this.customCategories.find(c => c.id === catId);
+    if (customCat) {
+      customCat.name = newName;
+      customCat.tamil = newName;
+      customCat.tamilName = newName;
+    }
+
+    this.saveStorage();
+    this.populateCategorySelects();
+    this.renderCategories();
+    this.renderChannels();
+    this.renderManageCategoriesList();
+    this.closeModal('edit-category-modal');
+
+    if (this.remote) {
+      this.remote.showToast(`Category updated to "${newName}"!`);
+    }
+  }
+
+  // Open Delete Category Confirmation Modal
+  openDeleteCategoryModal(catId, catName = '', catCount = null) {
+    if (!this.auth || !this.auth.isAdmin()) {
+      alert("Administrator access required to delete categories. Please sign in as Admin.");
+      this.openModal('login-modal');
+      return;
+    }
+
+    if (catId === 'all' || catId === 'favorites') {
+      if (this.remote) this.remote.showToast("System categories cannot be deleted.");
+      return;
+    }
+
+    const actualCount = catCount !== null 
+      ? catCount 
+      : this.channels.filter(c => c.category === catId).length;
+
+    const idInput = document.getElementById('delete-cat-id');
+    const nameDisplay = document.getElementById('delete-cat-name-display');
+    const countDisplay = document.getElementById('delete-cat-channel-count');
+
+    if (idInput) idInput.value = catId;
+    if (nameDisplay) nameDisplay.textContent = catName || catId;
+    if (countDisplay) countDisplay.textContent = `${actualCount}`;
+
+    this.openModal('delete-category-modal');
+  }
+
+  // Confirm and Execute Category Deletion
+  handleConfirmDeleteCategory() {
+    if (!this.auth || !this.auth.isAdmin()) {
+      alert("Administrator access required to delete categories. Please sign in as Admin.");
+      this.openModal('login-modal');
+      return;
+    }
+
+    const idInput = document.getElementById('delete-cat-id');
+    const catId = idInput ? idInput.value.trim() : '';
+    if (!catId) return;
+
+    if (!this.deletedCategoryIds.includes(catId)) {
+      this.deletedCategoryIds.push(catId);
+    }
+    delete this.categoryRenames[catId];
+
+    // Remove from customCategories
+    this.customCategories = this.customCategories.filter(c => c.id !== catId);
+
+    // Reassign all channels in this category to 'general'
+    let movedCount = 0;
+    this.channels.forEach(ch => {
+      if (ch.category === catId) {
+        ch.category = 'general';
+        ch.categoryName = 'General';
+        movedCount++;
+      }
+    });
+    this.customChannels.forEach(ch => {
+      if (ch.category === catId) {
+        ch.category = 'general';
+        ch.categoryName = 'General';
+      }
+    });
+
+    if (this.currentCategory === catId) {
+      this.currentCategory = 'all';
+    }
+
+    this.saveStorage();
+    this.populateCategorySelects();
+    this.renderCategories();
+    this.renderChannels();
+    this.renderManageCategoriesList();
+    this.closeModal('delete-category-modal');
+
+    if (this.remote) {
+      this.remote.showToast(`Category deleted. ${movedCount} channel(s) moved to General.`);
     }
   }
 
@@ -2491,6 +2789,7 @@ class TamilIPTVApp {
     const addChannelBtn = document.getElementById('btn-open-add-channel');
     const importBtn = document.getElementById('btn-open-import');
     const addCategoryBtn = document.getElementById('btn-open-add-category');
+    const manageCategoriesBtn = document.getElementById('btn-open-manage-categories');
     const editCurrentBtn = document.getElementById('btn-edit-current');
     const deleteCurrentBtn = document.getElementById('btn-delete-current');
     const deleteAllBtn = document.getElementById('btn-delete-all-settings');
@@ -2504,6 +2803,7 @@ class TamilIPTVApp {
     if (addChannelBtn) addChannelBtn.style.display = isAdmin ? 'inline-flex' : 'none';
     if (importBtn) importBtn.style.display = isAdmin ? 'inline-flex' : 'none';
     if (addCategoryBtn) addCategoryBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+    if (manageCategoriesBtn) manageCategoriesBtn.style.display = isAdmin ? 'inline-flex' : 'none';
     if (editCurrentBtn) editCurrentBtn.style.display = isAdmin ? 'inline-flex' : 'none';
     if (deleteCurrentBtn) deleteCurrentBtn.style.display = isAdmin ? 'inline-flex' : 'none';
     if (deleteAllBtn) deleteAllBtn.style.display = isAdmin ? 'inline-block' : 'none';

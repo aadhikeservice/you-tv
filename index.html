@@ -337,11 +337,16 @@
         <!-- Rendered dynamically by app.js -->
       </div>
 
-      <!-- Actions: Add Category & View Switcher (List vs Grid) -->
+      <!-- Actions: Add Category, Manage Categories & View Switcher (List vs Grid) -->
       <div class="flex items-center space-x-2 flex-shrink-0">
         <button id="btn-open-add-category" onclick="openAppModal('add-category-modal')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600/60 text-emerald-300 hover:text-white text-xs font-semibold transition-all shadow-sm cursor-pointer" title="Add New Category">
           <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span class="inline">+ Category</span>
+        </button>
+
+        <button id="btn-open-manage-categories" onclick="if (window.app) window.app.openManageCategoriesModal();" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-all shadow-sm cursor-pointer" title="Manage All Categories">
+          <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <span class="inline">Manage Categories</span>
         </button>
 
         <button id="toggle-view-btn" class="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold border border-slate-800 transition-all cursor-pointer">
@@ -949,6 +954,129 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: EDIT CATEGORY -->
+  <!-- ========================================================================= -->
+  <div id="edit-category-modal" class="app-modal fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-elevated w-full max-w-md rounded-2xl p-6 text-slate-200 space-y-4 border border-amber-500/30 shadow-2xl shadow-amber-950/40">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5 text-amber-400">
+          <div class="w-8 h-8 rounded-lg bg-amber-950/80 border border-amber-600/40 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Edit Category</h3>
+            <p class="text-[11px] text-amber-300">Rename this channel category</p>
+          </div>
+        </div>
+        <button class="close-modal-btn text-slate-400 hover:text-white p-1 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <form id="edit-category-form" onsubmit="event.preventDefault(); if (window.app) window.app.handleSaveEditedCategory();" class="space-y-3.5">
+        <input type="hidden" id="edit-cat-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Category Name (English) *</label>
+          <input type="text" id="edit-cat-name" required placeholder="e.g. Sports, News, Movies" class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400 flex items-start space-x-2">
+          <svg class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span>All channels currently assigned to this category will automatically update to the new category name.</span>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-800/80">
+          <button type="button" onclick="closeAppModal()" class="close-modal-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-amber-600/30 flex items-center space-x-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: DELETE CATEGORY -->
+  <!-- ========================================================================= -->
+  <div id="delete-category-modal" class="app-modal fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-elevated w-full max-w-md rounded-2xl p-6 text-slate-200 space-y-4 border border-rose-500/30 shadow-2xl shadow-rose-950/40">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5 text-rose-400">
+          <div class="w-8 h-8 rounded-lg bg-rose-950/80 border border-rose-600/40 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Delete Category</h3>
+            <p class="text-[11px] text-rose-300">Remove category safely</p>
+          </div>
+        </div>
+        <button class="close-modal-btn text-slate-400 hover:text-white p-1 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <input type="hidden" id="delete-cat-id">
+
+      <div class="space-y-3 text-xs text-slate-300">
+        <p>Are you sure you want to delete the category <span id="delete-cat-name-display" class="font-bold text-white px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">Category</span>?</p>
+        
+        <div class="p-3 bg-amber-950/30 border border-amber-600/30 rounded-xl space-y-1">
+          <div class="font-semibold text-amber-300 flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <span>Safe Category Removal</span>
+          </div>
+          <p class="text-[11px] text-slate-400">
+            This category has <strong id="delete-cat-channel-count" class="text-white">0</strong> channel(s). 
+            Channels will <strong>not be lost</strong> — they will be safely transferred to the <strong class="text-white">"General"</strong> category.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-800/80">
+        <button type="button" onclick="closeAppModal()" class="close-modal-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Cancel</button>
+        <button type="button" id="btn-confirm-delete-cat" onclick="if (window.app) window.app.handleConfirmDeleteCategory();" class="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <span>Delete Category</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: MANAGE CATEGORIES -->
+  <!-- ========================================================================= -->
+  <div id="manage-categories-modal" class="app-modal fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-elevated w-full max-w-xl rounded-2xl p-6 text-slate-200 space-y-4 border border-cyan-500/30 shadow-2xl shadow-cyan-950/40 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-shrink-0">
+        <div class="flex items-center space-x-2.5 text-cyan-400">
+          <div class="w-8 h-8 rounded-lg bg-cyan-950/80 border border-cyan-600/40 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Manage Categories</h3>
+            <p class="text-[11px] text-cyan-300">Edit category titles or delete categories</p>
+          </div>
+        </div>
+        <button class="close-modal-btn text-slate-400 hover:text-white p-1 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <div class="flex-shrink-0 flex items-center justify-between">
+        <span class="text-xs text-slate-400 font-semibold" id="manage-categories-count-label">Categories</span>
+        <button onclick="openAppModal('add-category-modal')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>+ Add New Category</span>
+        </button>
+      </div>
+
+      <!-- Categories List Container -->
+      <div id="manage-categories-list" class="flex-1 overflow-y-auto space-y-2 pr-1 divide-y divide-slate-800/60 max-h-[50vh]">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="pt-3 flex justify-end border-t border-slate-800/80 flex-shrink-0">
+        <button type="button" onclick="closeAppModal()" class="close-modal-btn px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Close</button>
+      </div>
     </div>
   </div>
 

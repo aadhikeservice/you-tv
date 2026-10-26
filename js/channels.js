@@ -1417,18 +1417,22 @@ function getChannelCategories(channels = [], customCategories = []) {
     'general': { name: 'General', tamil: 'General' }
   };
 
+  const renames = (typeof SafeStorage !== 'undefined') ? SafeStorage.getJSON('tamil_iptv_category_renames', {}) : {};
+  const deleted = (typeof SafeStorage !== 'undefined') ? SafeStorage.getJSON('tamil_iptv_deleted_categories', []) : [];
+
   // Group channels dynamically by category
   const catGroups = {};
 
   // Seed with user custom categories so they always show
   if (Array.isArray(customCategories)) {
     customCategories.forEach(c => {
-      if (!c || !c.id) return;
+      if (!c || !c.id || deleted.includes(c.id)) return;
       const key = c.id.toString().trim().toLowerCase();
+      const displayName = renames[key] || c.name || key;
       catGroups[key] = {
         id: key,
-        name: c.name || key,
-        tamil: c.tamil || c.tamilName || c.name || key,
+        name: displayName,
+        tamil: displayName,
         count: 0,
         isCustomCat: true
       };
@@ -1439,15 +1443,14 @@ function getChannelCategories(channels = [], customCategories = []) {
   if (Array.isArray(channels)) {
     channels.forEach(ch => {
       let catKey = (ch.category || 'general').toString().trim().toLowerCase();
-      if (!catKey) catKey = 'general';
+      if (!catKey || deleted.includes(catKey)) catKey = 'general';
       if (!catGroups[catKey]) {
         const meta = knownCategoryMeta[catKey];
-        const displayName = ch.categoryName || (meta ? meta.name : (ch.category || catKey));
-        const displayTamil = meta ? meta.tamil : (ch.categoryName || ch.category || catKey);
+        const displayName = renames[catKey] || ch.categoryName || (meta ? meta.name : (ch.category || catKey));
         catGroups[catKey] = {
           id: catKey,
           name: displayName,
-          tamil: displayTamil,
+          tamil: displayName,
           count: 0
         };
       }
