@@ -1383,6 +1383,71 @@ const DEFAULT_TAMIL_CHANNELS = [
         "badge":  "HD",
         "isCustom":  false,
         "description":  "24/7 Live streaming broadcast."
+    },
+    {
+        "id": "dw-english",
+        "num": "104",
+        "name": "DW English",
+        "tamilName": "DW English",
+        "category": "english",
+        "categoryName": "English",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Deutsche_Welle_symbol_2012.svg/320px-Deutsche_Welle_symbol_2012.svg.png",
+        "streamUrl": "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8",
+        "badge": "HD",
+        "isCustom": false,
+        "description": "Deutsche Welle English live news and international documentaries."
+    },
+    {
+        "id": "france24-english",
+        "num": "105",
+        "name": "France 24 English",
+        "tamilName": "France 24 English",
+        "category": "english",
+        "categoryName": "English",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/France_24_logo.svg/320px-France_24_logo.svg.png",
+        "streamUrl": "https://static.france24.com/live/F24_EN_LO_HLS/live_tv.m3u8",
+        "badge": "HD",
+        "isCustom": false,
+        "description": "International live news from France 24 in English."
+    },
+    {
+        "id": "nhk-world-english",
+        "num": "106",
+        "name": "NHK World Japan",
+        "tamilName": "NHK World Japan",
+        "category": "english",
+        "categoryName": "English",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/NHK_World-Japan.svg/320px-NHK_World-Japan.svg.png",
+        "streamUrl": "https://b-nhkworld.akamaized.net/hls/live/2003459/nhkworld-tv/index_1180.m3u8",
+        "badge": "HD",
+        "isCustom": false,
+        "description": "NHK World Japan 24/7 English news and Asian cultural programming."
+    },
+    {
+        "id": "wildearth-travel",
+        "num": "107",
+        "name": "WildEarth Nature Travel",
+        "tamilName": "WildEarth Nature Travel",
+        "category": "travel",
+        "categoryName": "Travel",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Globe_icon.svg/240px-Globe_icon.svg.png",
+        "streamUrl": "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e838d634638640c83a5327299a918a550186/wildearth-rakuten/playlist.m3u8",
+        "badge": "HD",
+        "isCustom": false,
+        "description": "Live nature, wildlife safari and world exploration travel broadcasts."
+    },
+    {
+        "id": "travel-world",
+        "num": "108",
+        "name": "Travel World HD",
+        "tamilName": "Travel World HD",
+        "category": "travel",
+        "categoryName": "Travel",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Globe_icon_2.svg/240px-Globe_icon_2.svg.png",
+        "streamUrl": "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e838d634638640c83a5327299a918a550186/wildearth-rakuten/playlist.m3u8",
+        "badge": "HD",
+        "isCustom": false,
+        "description": "World travel destinations, heritage sights, and culture guide."
     }
 ];
 
@@ -1412,6 +1477,8 @@ function getChannelCategories(channels = [], customCategories = []) {
     'devotional': { name: 'Devotional', tamil: 'Devotional' },
     'kids': { name: 'Kids & Info', tamil: 'Kids & Info' },
     'sports': { name: 'Sports', tamil: 'Sports' },
+    'travel': { name: 'Travel', tamil: 'Travel' },
+    'english': { name: 'English', tamil: 'English' },
     'srilanka': { name: 'Sri Lanka & Global', tamil: 'Sri Lanka & Global' },
     'custom': { name: 'Custom M3U', tamil: 'Custom M3U' },
     'general': { name: 'General', tamil: 'General' }
@@ -1422,6 +1489,21 @@ function getChannelCategories(channels = [], customCategories = []) {
 
   // Group channels dynamically by category
   const catGroups = {};
+
+  // Seed with base categories so Travel and English always show in categories even if count is 0
+  ['travel', 'english'].forEach(key => {
+    if (!deleted.includes(key) && !catGroups[key]) {
+      const meta = knownCategoryMeta[key];
+      const displayName = renames[key] || (meta ? meta.name : key);
+      catGroups[key] = {
+        id: key,
+        name: displayName,
+        tamil: displayName,
+        count: 0,
+        isCustomCat: true
+      };
+    }
+  });
 
   // Seed with user custom categories so they always show
   if (Array.isArray(customCategories)) {

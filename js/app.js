@@ -33,6 +33,9 @@ class TamilIPTVApp {
       // 1. Load local storage states safely
       this.loadStorage();
 
+      // 1b. Check for incoming multi-device sync link or login payload in URL
+      this.handleIncomingSyncUrl();
+
       // 2. Combine default and custom channels (excluding deleted channels)
       const defaults = (typeof DEFAULT_TAMIL_CHANNELS !== 'undefined' && Array.isArray(DEFAULT_TAMIL_CHANNELS))
         ? DEFAULT_TAMIL_CHANNELS
@@ -40,6 +43,9 @@ class TamilIPTVApp {
       const combined = [...defaults, ...this.customChannels];
       this.channels = combined.filter(ch => !this.deletedChannelIds.includes(ch.id));
       this.applyCategoryOverrides();
+
+      // 2b. Asynchronously check and sync from repository seed (data/custom_channels.json)
+      this.syncFromRepoSeed();
 
       // 3. Initialize player with dual engine (HLS.js + 1080p Live Stream)
       try {
@@ -132,24 +138,6 @@ class TamilIPTVApp {
 
   loadStorage() {
     try {
-      const isClean = (typeof SafeStorage !== 'undefined') ? SafeStorage.getItem('tamil_iptv_clean_v4') : null;
-      if (!isClean && typeof SafeStorage !== 'undefined') {
-        SafeStorage.setItem('tamil_iptv_clean_v4', '1');
-        SafeStorage.setJSON('tamil_iptv_custom_channels', []);
-        SafeStorage.setJSON('tamil_iptv_favorites', []);
-        SafeStorage.setJSON('tamil_iptv_deleted_channels', []);
-        SafeStorage.setJSON('tamil_iptv_category_renames', {});
-        SafeStorage.setJSON('tamil_iptv_deleted_categories', []);
-        SafeStorage.setItem('tamil_iptv_last_channel', '');
-        this.favorites = [];
-        this.recentChannelIds = [];
-        this.customChannels = [];
-        this.deletedChannelIds = [];
-        this.categoryRenames = {};
-        this.deletedCategoryIds = [];
-        return;
-      }
-
       if (typeof SafeStorage !== 'undefined') {
         this.favorites = SafeStorage.getJSON('tamil_iptv_favorites', []);
         this.recentChannelIds = SafeStorage.getJSON('tamil_iptv_recents', []);
@@ -2114,6 +2102,8 @@ class TamilIPTVApp {
       { id: 'devotional', name: 'Devotional', tamil: 'Devotional' },
       { id: 'kids', name: 'Kids', tamil: 'Kids' },
       { id: 'sports', name: 'Sports', tamil: 'Sports' },
+      { id: 'travel', name: 'Travel', tamil: 'Travel' },
+      { id: 'english', name: 'English', tamil: 'English' },
       { id: 'srilanka', name: 'Sri Lanka & Global', tamil: 'Sri Lanka & Global' }
     ];
 
@@ -2645,6 +2635,24 @@ class TamilIPTVApp {
 
     this.customChannels.push(newChannel);
     this.channels.push(newChannel);
+
+    // Ensure all regular users also have access to this newly added channel
+    if (this.auth) {
+      const allUsers = this.auth.getUsers();
+      let usersUpdated = false;
+      allUsers.forEach(u => {
+        if (u.channelAccess === 'selected' && Array.isArray(u.allowedChannels)) {
+          if (!u.allowedChannels.includes(newChannel.id)) {
+            u.allowedChannels.push(newChannel.id);
+            usersUpdated = true;
+          }
+        }
+      });
+      if (usersUpdated) {
+        this.auth.saveUsers(allUsers);
+      }
+    }
+
     this.saveStorage();
     this.populateCategorySelects();
     this.currentCategory = category || 'all';
@@ -2736,6 +2744,10 @@ class TamilIPTVApp {
                   <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                   <span>Manage Users</span>
                 </button>
+                <button id="btn-menu-sync-devices" class="w-full text-left px-3 py-2 rounded-xl text-indigo-300 hover:text-white hover:bg-indigo-950/40 flex items-center space-x-2 transition-colors cursor-pointer font-medium">
+                  <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                  <span>Sync to Other Devices</span>
+                </button>
               ` : ''}
 
               <button id="btn-menu-change-pw" class="w-full text-left px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2 transition-colors cursor-pointer font-medium">
@@ -2767,6 +2779,10 @@ class TamilIPTVApp {
           dropdown?.classList.add('hidden');
           this.openUserManagementModal();
         });
+        document.getElementById('btn-menu-sync-devices')?.addEventListener('click', () => {
+          dropdown?.classList.add('hidden');
+          this.openSyncDevicesModal();
+        });
         document.getElementById('btn-menu-change-pw')?.addEventListener('click', () => {
           dropdown?.classList.add('hidden');
           this.openChangePasswordModal(user.username);
@@ -2788,6 +2804,7 @@ class TamilIPTVApp {
     // Toggle Admin-only Controls Visibility in Header & Toolbars
     const addChannelBtn = document.getElementById('btn-open-add-channel');
     const importBtn = document.getElementById('btn-open-import');
+    const syncDevicesBtn = document.getElementById('btn-open-sync-devices');
     const addCategoryBtn = document.getElementById('btn-open-add-category');
     const manageCategoriesBtn = document.getElementById('btn-open-manage-categories');
     const editCurrentBtn = document.getElementById('btn-edit-current');
@@ -3217,6 +3234,10 @@ class TamilIPTVApp {
             </div>
 
             <div class="flex items-center space-x-1.5 pl-2">
+              <button data-action="share-login" data-username="${u.username}" class="btn-user-share-login px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 hover:text-white border border-indigo-700/60 text-[11px] font-semibold transition-colors flex items-center space-x-1 cursor-pointer" title="Share direct 1-click Login Link for @${u.username} to use on other devices">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                <span>Share Link</span>
+              </button>
               <button data-action="edit-user" data-username="${u.username}" class="btn-user-edit px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 border border-slate-800 text-[11px] font-semibold transition-colors flex items-center space-x-1 cursor-pointer" title="Edit Settings for @${u.username}">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 <span>Edit</span>
@@ -3278,6 +3299,13 @@ class TamilIPTVApp {
     }).join('');
 
     // Attach click events
+    container.querySelectorAll('.btn-user-share-login').forEach(btn => {
+      btn.onclick = () => {
+        const username = btn.getAttribute('data-username');
+        if (username) this.copyUserLoginLink(username);
+      };
+    });
+
     container.querySelectorAll('.btn-user-edit').forEach(btn => {
       btn.onclick = () => {
         const username = btn.getAttribute('data-username');
@@ -3726,6 +3754,383 @@ class TamilIPTVApp {
       navigator.serviceWorker.register('./service-worker.js').catch(err => {
         console.log("Service worker registration skipped on local/file:", err);
       });
+    }
+  }
+
+  // =========================================================================
+  // MULTI-DEVICE SYNC & CONNECT ENGINE
+  // =========================================================================
+
+  handleIncomingSyncUrl() {
+    try {
+      const hash = window.location.hash || '';
+      const search = window.location.search || '';
+      const fullUrl = hash + '&' + search;
+
+      let syncParam = null;
+      let userParam = null;
+      let pwParam = null;
+
+      const syncMatch = fullUrl.match(/[#&?]sync=([^&]+)/);
+      if (syncMatch && syncMatch[1]) {
+        syncParam = decodeURIComponent(syncMatch[1]);
+      }
+
+      const userMatch = fullUrl.match(/[#&?]user=([^&]+)/);
+      if (userMatch && userMatch[1]) {
+        userParam = decodeURIComponent(userMatch[1]);
+      }
+
+      const pwMatch = fullUrl.match(/[#&?]p=([^&]+)/);
+      if (pwMatch && pwMatch[1]) {
+        pwParam = decodeURIComponent(pwMatch[1]);
+      }
+
+      if (syncParam) {
+        const payload = this.decodeSyncPayload(syncParam);
+        if (payload) {
+          this.applySyncPayload(payload, false);
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+          setTimeout(() => {
+            if (this.remote) {
+              this.remote.showToast("✓ Device Synced! Users and custom channels are ready on this device.", 7000);
+            }
+          }, 600);
+        }
+      }
+
+      if (userParam && pwParam && this.auth) {
+        setTimeout(() => {
+          this.executeLogin(userParam, pwParam);
+        }, 400);
+      }
+    } catch (err) {
+      console.warn("Incoming sync processing error:", err);
+    }
+  }
+
+  encodeSyncPayload(data) {
+    try {
+      const json = JSON.stringify(data);
+      return btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode('0x' + p1);
+      }));
+    } catch (e) {
+      console.error("Encode sync error:", e);
+      return '';
+    }
+  }
+
+  decodeSyncPayload(b64) {
+    try {
+      const cleanB64 = (b64 || '').trim().replace(/^#sync=/, '').replace(/^sync=/, '');
+      const json = decodeURIComponent(Array.prototype.map.call(atob(cleanB64), (c) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(json);
+    } catch (e) {
+      console.error("Decode sync error:", e);
+      return null;
+    }
+  }
+
+  generateSyncPayload() {
+    const users = this.auth ? this.auth.getUsers() : [];
+    const customChannels = this.customChannels || [];
+    const customCategories = this.customCategories || [];
+    const categoryRenames = this.categoryRenames || {};
+    const deletedCategoryIds = this.deletedCategoryIds || [];
+    const deletedChannelIds = this.deletedChannelIds || [];
+
+    return {
+      version: 1,
+      appName: 'YOU TV',
+      exportedAt: new Date().toISOString(),
+      users: users,
+      customChannels: customChannels,
+      customCategories: customCategories,
+      categoryRenames: categoryRenames,
+      deletedCategoryIds: deletedCategoryIds,
+      deletedChannelIds: deletedChannelIds
+    };
+  }
+
+  getSyncUrl() {
+    const payload = this.generateSyncPayload();
+    const encoded = this.encodeSyncPayload(payload);
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    return `${origin}${pathname}#sync=${encoded}`;
+  }
+
+  copySyncLink() {
+    const url = this.getSyncUrl();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        if (this.remote) this.remote.showToast("✓ 1-Click Sync Link copied to clipboard!");
+        else alert("1-Click Sync Link copied to clipboard!");
+      }).catch(() => {
+        prompt("Copy this Sync Link:", url);
+      });
+    } else {
+      prompt("Copy this Sync Link:", url);
+    }
+  }
+
+  copyUserLoginLink(username) {
+    if (!this.auth) return;
+    const user = this.auth.getUser(username);
+    if (!user) {
+      alert("User not found.");
+      return;
+    }
+    const payload = this.generateSyncPayload();
+    const encoded = this.encodeSyncPayload(payload);
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    const link = `${origin}${pathname}#user=${encodeURIComponent(user.username)}&p=${encodeURIComponent(user.password)}&sync=${encoded}`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        if (this.remote) this.remote.showToast(`✓ Direct Login link for @${username} copied to clipboard!`);
+        else alert(`Direct Login link for @${username} copied to clipboard!`);
+      }).catch(() => {
+        prompt(`Direct Login Link for @${username}:`, link);
+      });
+    } else {
+      prompt(`Direct Login Link for @${username}:`, link);
+    }
+  }
+
+  applySyncPayload(payload, showToast = true) {
+    if (!payload || typeof payload !== 'object') {
+      if (showToast) alert("Invalid sync data format.");
+      return false;
+    }
+
+    let usersImported = 0;
+    let channelsImported = 0;
+
+    // 1. Sync Users
+    if (Array.isArray(payload.users) && this.auth) {
+      const existingUsers = this.auth.getUsers();
+      payload.users.forEach(incomingUser => {
+        if (!incomingUser || !incomingUser.username) return;
+        const idx = existingUsers.findIndex(u => u.username.toLowerCase() === incomingUser.username.toLowerCase());
+        if (idx !== -1) {
+          existingUsers[idx] = { ...existingUsers[idx], ...incomingUser };
+        } else {
+          existingUsers.push(incomingUser);
+          usersImported++;
+        }
+      });
+      this.auth.saveUsers(existingUsers);
+    }
+
+    // 2. Sync Custom Channels
+    if (Array.isArray(payload.customChannels)) {
+      payload.customChannels.forEach(incomingCh => {
+        if (!incomingCh || !incomingCh.id) return;
+        const idx = this.customChannels.findIndex(c => c.id === incomingCh.id);
+        if (idx !== -1) {
+          this.customChannels[idx] = incomingCh;
+        } else {
+          this.customChannels.push(incomingCh);
+          channelsImported++;
+        }
+      });
+    }
+
+    // 3. Sync Categories
+    if (Array.isArray(payload.customCategories)) {
+      payload.customCategories.forEach(incomingCat => {
+        if (!incomingCat || !incomingCat.id) return;
+        if (!this.customCategories.some(c => c.id === incomingCat.id)) {
+          this.customCategories.push(incomingCat);
+        }
+      });
+    }
+
+    if (payload.categoryRenames && typeof payload.categoryRenames === 'object') {
+      Object.assign(this.categoryRenames, payload.categoryRenames);
+    }
+
+    if (Array.isArray(payload.deletedCategoryIds)) {
+      payload.deletedCategoryIds.forEach(id => {
+        if (!this.deletedCategoryIds.includes(id)) this.deletedCategoryIds.push(id);
+      });
+    }
+
+    // Persist storage and re-render app components
+    this.saveStorage();
+    const defaults = (typeof DEFAULT_TAMIL_CHANNELS !== 'undefined' && Array.isArray(DEFAULT_TAMIL_CHANNELS))
+      ? DEFAULT_TAMIL_CHANNELS
+      : [];
+    const combined = [...defaults, ...this.customChannels];
+    this.channels = combined.filter(ch => !this.deletedChannelIds.includes(ch.id));
+    this.applyCategoryOverrides();
+    this.populateCategorySelects();
+    this.renderCategories();
+    this.renderChannels();
+
+    if (typeof this.renderUsersList === 'function') {
+      this.renderUsersList();
+    }
+
+    if (showToast) {
+      const msg = `✓ Device Synced! (${usersImported} new users, ${channelsImported} new channels imported)`;
+      if (this.remote) this.remote.showToast(msg, 6000);
+      else alert(msg);
+    }
+    return true;
+  }
+
+  applySyncCode(rawInput) {
+    if (!rawInput || !rawInput.trim()) {
+      alert("Please paste a Sync Code, Sync Link, or Backup JSON.");
+      return;
+    }
+    rawInput = rawInput.trim();
+
+    // Check if direct JSON string
+    if (rawInput.startsWith('{') && rawInput.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(rawInput);
+        this.applySyncPayload(parsed, true);
+        this.closeModal('enter-sync-code-modal');
+        return;
+      } catch (e) {}
+    }
+
+    // Check if URL with #sync=
+    if (rawInput.includes('sync=')) {
+      const match = rawInput.match(/sync=([^&#]+)/);
+      if (match && match[1]) {
+        rawInput = decodeURIComponent(match[1]);
+      }
+    }
+
+    const payload = this.decodeSyncPayload(rawInput);
+    if (!payload) {
+      alert("Invalid or corrupted Sync Code. Please ensure the full code was copied from the admin device.");
+      return;
+    }
+
+    this.applySyncPayload(payload, true);
+    this.closeModal('enter-sync-code-modal');
+  }
+
+  openSyncDevicesModal() {
+    const url = this.getSyncUrl();
+    const payload = this.generateSyncPayload();
+    const code = this.encodeSyncPayload(payload);
+
+    const linkInput = document.getElementById('sync-modal-link-input');
+    const codeArea = document.getElementById('sync-modal-code-area');
+    const qrImg = document.getElementById('sync-modal-qr-img');
+
+    if (linkInput) linkInput.value = url;
+    if (codeArea) codeArea.value = code;
+    if (qrImg) {
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}`;
+    }
+
+    this.openModal('sync-devices-modal');
+  }
+
+  openEnterSyncCodeModal() {
+    const input = document.getElementById('input-sync-code-text');
+    if (input) input.value = '';
+    this.openModal('enter-sync-code-modal');
+  }
+
+  exportBackupFile() {
+    const payload = this.generateSyncPayload();
+    const str = JSON.stringify(payload, null, 2);
+    const blob = new Blob([str], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `you-tv-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if (this.remote) this.remote.showToast("Exported backup file successfully!");
+  }
+
+  exportRepoFiles() {
+    const users = this.auth ? this.auth.getUsers() : [];
+    const customChannels = this.customChannels || [];
+
+    // Download users.json
+    const uBlob = new Blob([JSON.stringify(users, null, 2)], { type: 'application/json' });
+    const uUrl = URL.createObjectURL(uBlob);
+    const a1 = document.createElement('a');
+    a1.href = uUrl;
+    a1.download = 'users.json';
+    document.body.appendChild(a1);
+    a1.click();
+    document.body.removeChild(a1);
+    URL.revokeObjectURL(uUrl);
+
+    // Download custom_channels.json
+    setTimeout(() => {
+      const cBlob = new Blob([JSON.stringify(customChannels, null, 2)], { type: 'application/json' });
+      const cUrl = URL.createObjectURL(cBlob);
+      const a2 = document.createElement('a');
+      a2.href = cUrl;
+      a2.download = 'custom_channels.json';
+      document.body.appendChild(a2);
+      a2.click();
+      document.body.removeChild(a2);
+      URL.revokeObjectURL(cUrl);
+      if (this.remote) this.remote.showToast("Downloaded users.json and custom_channels.json for GitHub repo!");
+    }, 400);
+  }
+
+  importBackupFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        this.applySyncPayload(parsed, true);
+      } catch (err) {
+        alert("Failed to parse backup file: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  async syncFromRepoSeed() {
+    try {
+      if (typeof fetch === 'undefined') return;
+      const res = await fetch('data/custom_channels.json');
+      if (res.ok) {
+        const repoChannels = await res.json();
+        if (Array.isArray(repoChannels) && repoChannels.length > 0) {
+          let modified = false;
+          repoChannels.forEach(rc => {
+            if (!rc || !rc.id) return;
+            if (!this.customChannels.some(c => c.id === rc.id)) {
+              this.customChannels.push(rc);
+              this.channels.push(rc);
+              modified = true;
+            }
+          });
+          if (modified) {
+            this.saveStorage();
+            this.populateCategorySelects();
+            this.renderCategories();
+            this.renderChannels();
+          }
+        }
+      }
+    } catch (e) {
+      // offline / file protocol
     }
   }
 }

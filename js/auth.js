@@ -138,6 +138,59 @@ class AuthManager {
     } catch (e) {
       this.currentUser = null;
     }
+
+    // 3. Asynchronously check and sync from repository seed (data/users.json)
+    this.syncFromRepoSeed();
+  }
+
+  // Merge users from repo seed data (data/users.json) if available
+  async syncFromRepoSeed() {
+    try {
+      if (typeof fetch === 'undefined') return;
+      const res = await fetch('data/users.json');
+      if (res.ok) {
+        const repoUsers = await res.json();
+        if (Array.isArray(repoUsers) && repoUsers.length > 0) {
+          const localUsers = this.getUsers();
+          let modified = false;
+          repoUsers.forEach(ru => {
+            if (!ru || !ru.username) return;
+            const idx = localUsers.findIndex(u => u.username.toLowerCase() === ru.username.toLowerCase());
+            if (idx === -1) {
+              localUsers.push(ru);
+              modified = true;
+            }
+          });
+          if (modified) {
+            this.saveUsers(localUsers);
+            if (window.app && typeof window.app.renderUsersList === 'function') {
+              window.app.renderUsersList();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // offline / file protocol
+    }
+  }
+
+  // Import incoming users array from sync payload
+  importUsers(incomingUsers = []) {
+    if (!Array.isArray(incomingUsers)) return { imported: 0 };
+    const localUsers = this.getUsers();
+    let imported = 0;
+    incomingUsers.forEach(iu => {
+      if (!iu || !iu.username) return;
+      const idx = localUsers.findIndex(u => u.username.toLowerCase() === iu.username.toLowerCase());
+      if (idx !== -1) {
+        localUsers[idx] = { ...localUsers[idx], ...iu };
+      } else {
+        localUsers.push(iu);
+        imported++;
+      }
+    });
+    this.saveUsers(localUsers);
+    return { imported, total: localUsers.length };
   }
 
   // Retrieve all registered users

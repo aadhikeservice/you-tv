@@ -40,7 +40,7 @@
       if (id === 'epg-modal' || id === 'shortcuts-modal') {
         return;
       }
-      if ((id === 'settings-modal' || id === 'user-management-modal' || id === 'edit-user-modal') && window.app && window.app.auth && !window.app.auth.isAdmin()) {
+      if ((id === 'settings-modal' || id === 'user-management-modal' || id === 'edit-user-modal' || id === 'sync-devices-modal') && window.app && window.app.auth && !window.app.auth.isAdmin()) {
         if (window.app.remote) {
           window.app.remote.showToast(id === 'settings-modal' ? "Settings is disabled for users." : "Permission denied: Admin access required.");
         }
@@ -109,6 +109,14 @@
         <p class="text-xs sm:text-sm text-slate-400 font-medium">Live Television & Stream Guide</p>
       </div>
 
+      <!-- Live Channels Counter Badge -->
+      <div class="flex items-center justify-center">
+        <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>108+ Live Channels • Entertainment, News, Movies, Music, Travel & English</span>
+        </div>
+      </div>
+
       <!-- Main Login Container Card -->
       <div class="glass-panel-elevated rounded-3xl p-6 sm:p-8 border border-slate-800/90 shadow-2xl shadow-black/80 backdrop-blur-2xl space-y-5">
         
@@ -166,6 +174,20 @@
 
           <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 text-center">
             <span>Access is restricted to registered users. Need an account? Contact your Administrator.</span>
+          </div>
+
+          <!-- Multi-Device Connect Option -->
+          <div class="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2.5 text-indigo-300">
+              <div class="w-7 h-7 rounded-lg bg-indigo-900/60 border border-indigo-700/50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              </div>
+              <div>
+                <div class="font-bold text-white text-[11px]">Logging in from another device?</div>
+                <div class="text-[10px] text-slate-400">Connect to import users & custom channels</div>
+              </div>
+            </div>
+            <button type="button" onclick="if (window.app) window.app.openEnterSyncCodeModal();" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] shadow-sm transition-all cursor-pointer">Connect Device</button>
           </div>
         </div>
 
@@ -290,6 +312,17 @@
             <line x1="8" y1="12" x2="16" y2="12"></line>
           </svg>
           <span class="inline">Add Channel</span>
+        </button>
+
+        <!-- Sync Devices Button -->
+        <button id="btn-open-sync-devices" onclick="if (window.app) window.app.openSyncDevicesModal();" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800 transition-all flex items-center space-x-1.5 text-xs font-semibold cursor-pointer" title="Sync Users and Channels to Other Devices">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          </svg>
+          <span class="hidden sm:inline">Sync Devices</span>
         </button>
 
         <!-- Full EPG Guide Button (Disabled) -->
@@ -795,6 +828,8 @@
               <option value="devotional">Devotional</option>
               <option value="kids">Kids</option>
               <option value="sports">Sports</option>
+              <option value="travel">Travel</option>
+              <option value="english">English</option>
               <option value="srilanka">Sri Lanka & Global</option>
             </select>
           </div>
@@ -942,6 +977,8 @@
             <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="News" data-tamil="News">📰 News</button>
             <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="Music" data-tamil="Music">🎵 Music</button>
             <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="Kids" data-tamil="Kids">👶 Kids</button>
+            <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="Travel" data-tamil="Travel">✈️ Travel</button>
+            <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="English" data-tamil="English">🌐 English</button>
             <button type="button" class="preset-cat-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer" data-name="Regional" data-tamil="Regional">📡 Regional</button>
           </div>
         </div>
@@ -1377,6 +1414,31 @@
       </div>
 
       <div class="flex-1 overflow-y-auto pr-1 space-y-5">
+        <!-- Section: Multi-Device Sync Card -->
+        <div class="p-3.5 bg-gradient-to-r from-indigo-950/50 via-slate-900 to-purple-950/40 rounded-2xl border border-indigo-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center space-x-2">
+                <span>Multi-Device Sync</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-indigo-900/60 text-indigo-300 font-extrabold uppercase">Login from other devices</span>
+              </div>
+              <div class="text-[11px] text-slate-400">Share sync link, QR code, or sync code so created users can log in from other devices</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 flex-shrink-0">
+            <button type="button" onclick="if (window.app) window.app.copySyncLink();" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-950 flex items-center space-x-1.5 cursor-pointer transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              <span>Copy Sync Link</span>
+            </button>
+            <button type="button" onclick="if (window.app) window.app.openSyncDevicesModal();" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs cursor-pointer transition-all">
+              QR / Options
+            </button>
+          </div>
+        </div>
+
         <!-- Section: Admin Password Quick Action -->
         <div class="p-3.5 bg-gradient-to-r from-rose-950/40 via-slate-900 to-amber-950/30 rounded-2xl border border-rose-500/30 flex items-center justify-between shadow-sm">
           <div class="flex items-center space-x-2.5">
@@ -1747,6 +1809,136 @@
   </div>
 
   <!-- ========================================================================= -->
+  <!-- MODAL: SYNC TO OTHER DEVICES (ADMIN ONLY) -->
+  <!-- ========================================================================= -->
+  <div id="sync-devices-modal" class="app-modal fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-elevated w-full max-w-xl max-h-[92vh] rounded-3xl p-6 text-slate-200 flex flex-col space-y-4 border border-indigo-500/30 shadow-2xl shadow-indigo-950/50 overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-shrink-0">
+        <div class="flex items-center space-x-2.5 text-indigo-400">
+          <div class="w-9 h-9 rounded-xl bg-indigo-950/80 border border-indigo-600/40 flex items-center justify-center">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Sync to Other Devices</h3>
+            <p class="text-[11px] text-indigo-300/80">Allow created users and channels to log in from other devices</p>
+          </div>
+        </div>
+        <button class="close-modal-btn text-slate-400 hover:text-white p-1 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto pr-1 space-y-4">
+        <!-- Option 1: 1-Click Direct Sync Link -->
+        <div class="p-4 bg-slate-900/90 rounded-2xl border border-indigo-500/30 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-indigo-400 font-bold text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              <span>Option 1: 1-Click Sync Link</span>
+            </div>
+            <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">Fastest</span>
+          </div>
+          <p class="text-[11px] text-slate-300">Send this link to any phone, Smart TV, or PC. Opening the link once configures all users and custom channels on that device.</p>
+          <div class="flex items-center space-x-2">
+            <input type="text" id="sync-modal-link-input" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 font-mono outline-none select-all" onclick="this.select()">
+            <button type="button" onclick="if (window.app) window.app.copySyncLink();" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs whitespace-nowrap shadow-md shadow-indigo-950 flex items-center space-x-1.5 cursor-pointer transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copy Link</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Option 2: Scan QR Code -->
+        <div class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center gap-4">
+          <div class="w-32 h-32 rounded-2xl bg-white p-2 flex items-center justify-center flex-shrink-0 shadow-lg">
+            <img id="sync-modal-qr-img" src="" alt="Sync QR Code" class="w-full h-full object-contain">
+          </div>
+          <div class="space-y-1.5 text-left">
+            <div class="text-xs font-bold text-white flex items-center space-x-2">
+              <span>Option 2: Scan QR Code with Phone or Tablet</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Open your phone camera, scan the QR code, and open the site. All admin-created accounts will be ready on your phone immediately!
+            </p>
+          </div>
+        </div>
+
+        <!-- Option 3: Manual Sync Code -->
+        <div class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-bold text-white">Option 3: Sync Code (For Smart TV / Remote)</div>
+            <button type="button" onclick="const t = document.getElementById('sync-modal-code-area'); t.select(); navigator.clipboard.writeText(t.value); if (window.app && window.app.remote) window.app.remote.showToast('Sync Code copied!');" class="text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer">Copy Code</button>
+          </div>
+          <textarea id="sync-modal-code-area" rows="2" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-[11px] text-slate-400 font-mono outline-none select-all resize-none"></textarea>
+          <div class="text-[11px] text-slate-400">On your other device, click <strong class="text-white">"Connect Device"</strong> on the login screen and paste this code.</div>
+        </div>
+
+        <!-- Option 4: Permanent Data Backup & GitHub Repo Export -->
+        <div class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 space-y-2.5">
+          <div class="text-xs font-bold text-white">Option 4: Backup & GitHub Repository Export</div>
+          <p class="text-[11px] text-slate-400">Export backup JSON to restore anytime, or download files to commit directly into the GitHub repository for permanent global multi-device sync.</p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button type="button" onclick="if (window.app) window.app.exportBackupFile();" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center space-x-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Download Backup (.json)</span>
+            </button>
+            <label class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center space-x-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Import Backup File</span>
+              <input type="file" accept=".json" class="hidden" onchange="if (window.app && this.files[0]) window.app.importBackupFile(this.files[0]); this.value = '';">
+            </label>
+            <button type="button" onclick="if (window.app) window.app.exportRepoFiles();" class="px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 text-xs font-semibold flex items-center space-x-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              <span>Download for GitHub Repo</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 flex justify-end border-t border-slate-800 flex-shrink-0">
+        <button type="button" class="close-modal-btn px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ENTER SYNC CODE / CONNECT DEVICE -->
+  <!-- ========================================================================= -->
+  <div id="enter-sync-code-modal" class="app-modal fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-elevated w-full max-w-md rounded-3xl p-6 text-slate-200 space-y-4 border border-indigo-500/30 shadow-2xl shadow-indigo-950/50">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5 text-indigo-400">
+          <div class="w-8 h-8 rounded-lg bg-indigo-950/80 border border-indigo-600/40 flex items-center justify-center">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Connect & Sync Device</h3>
+            <p class="text-[11px] text-slate-400">Import accounts and custom channels from admin</p>
+          </div>
+        </div>
+        <button class="close-modal-btn text-slate-400 hover:text-white p-1 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Paste Sync Link, Code, or Backup JSON *</label>
+          <textarea id="input-sync-code-text" rows="4" placeholder="Paste the Sync Link or Sync Code generated by the Admin here..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl p-3 text-xs text-white font-mono outline-none"></textarea>
+        </div>
+
+        <div class="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-[11px] text-slate-300">
+          💡 <strong>Tip:</strong> Ask the Admin to click <strong>"Sync Devices"</strong> on their device and copy the link or code for you.
+        </div>
+      </div>
+
+      <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-800">
+        <button type="button" class="close-modal-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer">Cancel</button>
+        <button type="button" onclick="if (window.app) window.app.applySyncCode(document.getElementById('input-sync-code-text').value);" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center space-x-1.5 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          <span>Sync Device Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- ========================================================================= -->
   <!-- APPLICATION SCRIPTS (Non-module for direct file:// and server support) -->
   <!-- ========================================================================= -->
   <script src="js/channels.js"></script>
